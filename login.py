@@ -1,5 +1,6 @@
 import streamlit as st
 
+
 # Konfigurasi halaman utama
 st.set_page_config(page_title="Login", page_icon="🔐", layout="wide")
 
@@ -84,6 +85,9 @@ if not st.session_state.logged_in:
             """,
             unsafe_allow_html=True
         )
+    import overview
+    overview.overview()
+
 
 # Form login jika role sudah dipilih
 if st.session_state.role and not st.session_state.logged_in:
@@ -109,6 +113,7 @@ if st.session_state.role and not st.session_state.logged_in:
             st.rerun()
         else:
             st.error("❌ Username atau password salah!")
+    
 
 # Navigasi halaman setelah login
 if st.session_state.logged_in:
