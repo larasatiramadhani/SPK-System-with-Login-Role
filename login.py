@@ -121,12 +121,12 @@ if st.session_state.logged_in:
     st.sidebar.subheader("📂 Pilih Halaman")
 
     if st.session_state.role == "SPV":
-        page = st.sidebar.selectbox("📌 Pilih Halaman:", ["Tambah SPK", "Update SPK"], index=0)
+        page = st.sidebar.selectbox("📌 Pilih Halaman:", ["Tambah SPK", "Update/Delete SPK"], index=0)
 
         if page == "Tambah SPK":
             import add_SPV
             add_SPV.run()
-        elif page == "Update SPK":
+        elif page == "Update/Delete SPK":
             import update_SPV
             update_SPV.run()
 
