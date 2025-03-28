@@ -55,22 +55,22 @@ def run():
     # thread = threading.Thread(target=keep_alive, daemon=True)
     # thread.start()
 
-    bulan_romawi = {
-        1: "I", 2: "II", 3: "III", 4: "IV", 5: "V", 6: "VI",
-        7: "VII", 8: "VIII", 9: "IX", 10: "X", 11: "XI", 12: "XII"
-    }
 
     # Fungsi untuk mendapatkan nomor SPK otomatis
-    def generate_spk_number():
+    def generate_spk_number(selected_date):
+        bulan_romawi = {
+            1: "I", 2: "II", 3: "III", 4: "IV", 5: "V", 6: "VI",
+            7: "VII", 8: "VIII", 9: "IX", 10: "X", 11: "XI", 12: "XII"
+        }
         all_data = get_all_data()
-        current_month = datetime.now().month
-        current_year = datetime.now().year
-        current_month_romawi = bulan_romawi[current_month]  # Konversi bulan ke Romawi
+        selected_month = selected_date.month
+        selected_year = selected_date.year
+        selected_month_romawi = bulan_romawi[selected_month]  # Konversi bulan ke Romawi
 
         # Ambil semua nomor SPK untuk bulan dan tahun ini
         spk_numbers = [
             row[0] for row in all_data
-            if len(row) > 0 and f"/{current_month_romawi}/{current_year}" in row[0]
+            if len(row) > 0 and f"/{selected_month_romawi}/{selected_year}" in row[0]
         ]
 
         if spk_numbers:
@@ -83,16 +83,17 @@ def run():
             new_number = 1
 
         # Format nomor SPK baru
-        return f"{str(new_number).zfill(2)}/PR/{current_month_romawi}/{current_year}"
+        return f"{str(new_number).zfill(2)}/PR/{selected_month_romawi}/{selected_year}"
 
     # Ambil data dari Google Sheets
+    st.session_state.setdefault("form_tanggal", date.today())
     all_data = get_all_data()
 
     # Ambil data untuk select box
     options = get_options()
     defaults = {
-        "form_nomorSPK": generate_spk_number(), 
-        "form_tanggal": date.today(), 
+        "form_nomorSPK": generate_spk_number(st.session_state["form_tanggal"]), 
+        "form_tanggal": st.session_state["form_tanggal"], 
         "form_bu": "",
         "form_produk": "", 
         "form_line": "", 
@@ -130,10 +131,13 @@ def run():
     st.subheader("📌 Informasi SPK")  
     col1, col2 = st.columns(2)  
     with col1:
-        nomor_spk = st.text_input("Nomor SPK", value=st.session_state.get("form_nomorSPK"), key="form_nomorSPK", disabled=True)
-    with col2:
         tanggal = st.date_input("Tanggal", value=st.session_state.get("form_tanggal"), key="form_tanggal")
-
+    with col2:
+        if "form_tanggal" not in st.session_state or tanggal != st.session_state["form_tanggal"]:
+            st.session_state["form_tanggal"] = tanggal
+        
+        nomor_spk = st.text_input("Nomor SPK", value=generate_spk_number(st.session_state["form_tanggal"]), key="form_nomorSPK", disabled=True)
+   
     # Divider
     st.markdown("---")
 
