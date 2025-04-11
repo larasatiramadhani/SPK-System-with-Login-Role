@@ -92,28 +92,29 @@ if not st.session_state.logged_in:
 
 # Form login jika role sudah dipilih
 if st.session_state.role and not st.session_state.logged_in:
-    st.markdown(
-        f"""
-        <div style="background-color: #D5DBDB; padding: 15px; border-radius: 8px; text-align: center; margin-top: 20px;">
-            <b>🔑 Login sebagai {st.session_state.role}</b>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    with st.sidebar:
+        st.markdown(
+            f"""
+            <div style="background-color: #D5DBDB; padding: 15px; border-radius: 8px; text-align: center; margin-top: 20px;">
+                <b>🔑 Login sebagai {st.session_state.role}</b>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
-    with st.form(key="login_form"):
-        username = st.text_input("👤 Username")
-        password = st.text_input("🔒 Password", type="password")
-        submit_button = st.form_submit_button("✅ Login")
+        with st.form(key="login_form"):
+            username = st.text_input("👤 Username")
+            password = st.text_input("🔒 Password", type="password")
+            submit_button = st.form_submit_button("✅ Login")
 
-    if submit_button:
-        creds = USER.get(st.session_state.role, {})
-        if username == creds.get("username") and password == creds.get("password"):
-            st.session_state.logged_in = True
-            st.success("✅ Login berhasil! Redirecting...")
-            st.rerun()
-        else:
-            st.error("❌ Username atau password salah!")
+        if submit_button:
+            creds = USER.get(st.session_state.role, {})
+            if username == creds.get("username") and password == creds.get("password"):
+                st.session_state.logged_in = True
+                st.success("✅ Login berhasil! Redirecting...")
+                st.rerun()
+            else:
+                st.error("❌ Username atau password salah!")
     
 
 # Navigasi halaman setelah login
