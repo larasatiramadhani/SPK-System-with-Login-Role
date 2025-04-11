@@ -12,6 +12,7 @@ APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3hzTtTqF2G7fyR7VdA0
 
 # Fungsi untuk mendapatkan semua data dari Google Sheets
 def overview():
+    @st.cache_data
     def get_all_data():
         try:
             response = requests.get(APPS_SCRIPT_URL, params={"action": "get_data"}, timeout=10)
@@ -137,21 +138,23 @@ def overview():
     def overview():
         st.title("Data Overview")
         data = get_all_data()
-        df = pd.DataFrame(data[1:], columns=[
-        "Nomor SPK", "Tanggal", "BU", "Jenis Produk", "Line",
-        "Jam Start", "Jam Stop", "Total Hour", "Speed(kg/jam)", 
-        "Rencana Total Output (kg)", "Rencana Total Output (Batch)", 
-        "Inner (roll)", "SM", "Alasan"]) if data else pd.DataFrame(columns=[
-        "Nomor SPK", "Tanggal", "BU", "Jenis Produk", "Line",
-        "Jam Start", "Jam Stop", "Total Hour", "Speed(kg/jam)", 
-        "Rencana Total Output (kg)", "Rencana Total Output (Batch)", 
-        "Inner (roll)", "SM", "Alasan"
-        ])
+        columns = [
+            "Nomor SPK", "Tanggal", "BU", "Jenis Produk", "Line",
+            "Jam Start", "Jam Stop", "Total Hour", "Speed(kg/jam)", 
+            "Rencana Total Output (kg)", "Rencana Total Output (Batch)", 
+            "Inner (roll)", "SM", "Alasan"
+        ]
         
+        df = pd.DataFrame(data[1:], columns=columns) if data else pd.DataFrame(columns=columns)
+
+        if data:
+            # Balik urutan baris → data terbaru di atas
+            df = df.iloc[::-1].reset_index(drop=True)
+
         if st.button("Muat Ulang Data"):
-            get_all_data.clear()
+            st.cache_data.clear()
             st.rerun()
-        
-        st.dataframe(filter_dataframe(df))  # Menerapkan filter sebelum ditampilkan
+
+        st.dataframe(filter_dataframe(df))
 
     overview()
