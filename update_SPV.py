@@ -151,6 +151,8 @@ def run():
             "Nomor SPK", "Tanggal", "BU", "Jenis Produk", "Line", "Jam Start", "Jam Stop", "Total hour",
             "Speed (kg/jam)", "Rencana Total Output (kg)", "Rencana Total Output (Batch)", "Inner (roll)", "SM", "Alasan"
         ])
+        # Urutkan data agar yang terbaru (yang masuk terakhir) muncul duluan
+        df = df.iloc[::-1].reset_index(drop=True)
 
         st.subheader("📊 Data Keseluruhan")
         items_per_page = 10
@@ -184,7 +186,10 @@ def run():
                         st.session_state.confirm_delete = unique_key
 
                 with col2:
-                    if st.button(f"✏ Edit {unique_key}", key=f"edit_{unique_key}"):
+                    if row['SM'] == "Approved":
+                        st.warning("🚫 Data ini sudah Approved oleh Manager.")
+
+                    elif st.button(f"✏ Edit {unique_key}", key=f"edit_{unique_key}"):
                         st.session_state["edit_data"] = row
                         st.session_state["editing"] = True
 
