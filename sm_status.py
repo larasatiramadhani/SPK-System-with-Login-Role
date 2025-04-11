@@ -96,8 +96,8 @@ def run():
                     kondisi_status = record["SM"].values[0]
 
                     # **Cek apakah sudah Approved/Rejected**
-                    if kondisi_status in ["Approved", "Rejected"]:
-                        st.warning("🚫 Data ini sudah Approved/Rejected oleh Anda.")
+                    if kondisi_status in ["Approved"]:
+                        st.warning("🚫 Data ini sudah Approved oleh Anda.")
                     else:
                         # **Pilih kondisi**
                         kondisi_options = ["Approved", "Rejected"]
